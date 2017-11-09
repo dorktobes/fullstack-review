@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongod://localhost/fetcher' || 'mongodb://localhost/fetcher');
+mongoose.connect('mongodb://localhost:27017/fetcher');
 
 let repoSchema = mongoose.Schema({
   repoid: Number, //repo.id
@@ -22,7 +22,6 @@ let save = (repos) => {
 
   repos.forEach((repo) => {
     var popularity = (repo.watchers_count + repo.stargazers_count + repo.forks) / 3;
-    console.log(repo.name);
     var currentRepo = new Repo({
       repoid: repo.id,
       repoName: repo.name,
@@ -34,27 +33,28 @@ let save = (repos) => {
       user: repo.owner.login,
       userid: repo.owner.id,
       popularityAverage: popularity
-    })
-
-    currentRepo.save((err, currentRepo) => {
-      if (err) {
-        console.log('OH NO', err);
+    });  
+    // console.log(Repo);
+    Repo.find({}, function(error, repos) {
+      console.log('CHECKING FOR DUPES........');
+      if(error) {
+        console.log(error);
+        return;
+      }
+      if (repos.length === 0) {
+        console.log('SAVING...');
+        currentRepo.save(function(error, currentRepo) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          console.log('succesffuly saved ' + currentRepo.reponame);
+        })
       } else {
-        console.log(currentRepo.repoName, 'was succesfully saved')
+        console.log('Repo already exists');
       }
     })
   })
-
-
-  // TODO: Your code here
-  // This function should save a repo or repos to                --> 'or repos' implies we'll probably accept an array here
-  // the MongoDB
 }
-module.exports.test = () => {  
-  Repo.find((err, repos) => {
-    if(err) {
-      console.log('ERROR', err)
-    }
-      console.log('SAVED', repos);
-  })}
+
 module.exports.save = save;
