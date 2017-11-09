@@ -15,7 +15,13 @@ class App extends React.Component {
 
   search (term) {
     console.log(`${term} was searched`);
-    // TODO
+    $.ajax({
+      method: "POST",
+      url:"http://localhost:1128/repos", //<======this needs to be changed for deploy, it is currently hard coded
+      data: term,
+      success: () => {console.log('posted', term)},
+      error: () => {console.log('error', term)}
+    })
   }
 
   render () {
