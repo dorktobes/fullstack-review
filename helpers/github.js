@@ -2,6 +2,7 @@ const request = require('request');
 const config = require('../config.js');
 
 let getReposByUsername = (username) => {
+  console.log('inside helper', username);
   // TODO - Use the request module to request repos for a specific
   // user from the github API
 
@@ -14,7 +15,15 @@ let getReposByUsername = (username) => {
       'Authorization': `token ${config.TOKEN}`
     }
   };
-
+  var data = '';
+  request.get(options)
+  .on('data', (packet) => {
+    data += packet;
+  }).on('end', ()=> {
+    console.log(JSON.parse(data).length);
+  }).on('error', (err) => {
+    console.log(err);
+  });
 }
 
 module.exports.getReposByUsername = getReposByUsername;

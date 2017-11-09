@@ -1,12 +1,15 @@
 const express = require('express');
+const helpers = require('../helpers/github.js');
 let app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
 
 app.post('/repos', function (req, res) {
 	console.log('POST REQUEST');
+	helpers.getReposByUsername
 	req.on('data', (packet) => {
-		console.log(packet + '');
+	  var username = packet + '';
+	  helpers.getReposByUsername(username);
 	})
   // TODO - your code here!
   // This route should take the github username provided
