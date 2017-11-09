@@ -33,7 +33,6 @@ class App extends React.Component {
       url:"http://localhost:1128/repos", //<======this needs to be changed for deploy, it is currently hard coded
       success: (repos) => {
       console.log('rerendered');
-      console.log(repos);
       this.setState({repos: repos});
     },
       error: (error) => {console.log('error!', error);}

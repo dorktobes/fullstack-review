@@ -25,7 +25,7 @@ let save = (repos) => {
     var currentRepo = new Repo({
       repoid: repo.id,
       repoName: repo.name,
-      url: repo.url,
+      url: repo.html_url,
       description: repo.description,
       watchersCount: repo.watchers_count,
       starGazers: repo.stargazers_count,
