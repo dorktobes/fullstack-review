@@ -8,7 +8,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      repos: []
+      repos: []//<<------repos go here
     }
 
   }
@@ -19,8 +19,24 @@ class App extends React.Component {
       method: "POST",
       url:"http://localhost:1128/repos", //<======this needs to be changed for deploy, it is currently hard coded
       data: term,
-      success: () => {console.log('posted', term)},
+      success: () => {
+        console.log('posted', term);
+        this.getRepos();
+      },
       error: () => {console.log('error', term)}
+    })
+  }
+
+  getRepos () {
+    $.ajax({
+      method: "GET",
+      url:"http://localhost:1128/repos", //<======this needs to be changed for deploy, it is currently hard coded
+      success: (repos) => {
+      console.log('rerendered');
+      console.log(repos);
+      this.setState({repos: repos});
+    },
+      error: (error) => {console.log('error!', error);}
     })
   }
 

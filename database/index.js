@@ -35,7 +35,7 @@ let save = (repos) => {
       popularityAverage: popularity
     });  
     // console.log(Repo);
-    Repo.find({}, function(error, repos) {
+    Repo.find({repoid: currentRepo.repoid}, function(error, repos) {
       console.log('CHECKING FOR DUPES........');
       if(error) {
         console.log(error);
@@ -48,13 +48,28 @@ let save = (repos) => {
             console.log(error);
             return;
           }
-          console.log('succesffuly saved ' + currentRepo.reponame);
+          console.log('succesffuly saved ' + currentRepo.repoName);
         })
       } else {
-        console.log('Repo already exists');
+        console.log('Repo ' + currentRepo.repoName+' already exists');
       }
     })
   })
+  return true;
+}
+
+let retreive = () => {
+  return Repo.find().
+  limit(25).
+  sort('-popularityAverage').
+  exec((err, data) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    return data;
+  });
 }
 
 module.exports.save = save;
+module.exports.retreive = retreive;

@@ -1,15 +1,18 @@
 const express = require('express');
 const helpers = require('../helpers/github.js');
 let app = express();
+const dbFuncs = require('../database/index.js')
 
 app.use(express.static(__dirname + '/../client/dist'));
 
 app.post('/repos', function (req, res) {
 	console.log('POST REQUEST');
-	helpers.getReposByUsername
 	req.on('data', (packet) => {
 	  var username = packet + '';
-	  helpers.getReposByUsername(username);
+	  if (helpers.getReposByUsername(username)) {
+	  	res.statusCode =201;
+	  	res.end();
+	  }
 	})
   // TODO - your code here!
   // This route should take the github username provided
@@ -18,6 +21,13 @@ app.post('/repos', function (req, res) {
 });
 
 app.get('/repos', function (req, res) {
+	let repos = dbFuncs.retreive();
+    repos.then((repos) =>{
+      console.log(repos);
+  		res.body = repos;
+  		res.statusCode = 200;
+  		res.end();
+    });
   // TODO - your code here!
   // This route should send back the top 25 repos
 });

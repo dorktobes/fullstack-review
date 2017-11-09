@@ -16,13 +16,13 @@ let getReposByUsername = (username) => {
     }
   };
   var data = '';
-  request.get(options)
+  return request.get(options)
   .on('data', (packet) => {
     data += packet;
   }).on('end', ()=> {
     //send this to DB
     var repos = JSON.parse(data);
-    save.save(repos);
+    return save.save(repos);
   }).on('error', (err) => {
     console.log(err);
   });
