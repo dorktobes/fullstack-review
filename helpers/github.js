@@ -22,6 +22,7 @@ let getReposByUsername = (username) => {
   }).on('end', ()=> {
     //send this to DB
     var repos = JSON.parse(data);
+    console.log('HELLO FROM DATA RECEIVER');
     return save.save(repos);
   }).on('error', (err) => {
     console.log(err);

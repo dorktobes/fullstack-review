@@ -23,7 +23,6 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
 	let repos = dbFuncs.retreive();
     repos.then((repos) =>{
-      console.log(repos);
   		res.statusCode = 200;
   		res.send(repos);
     });

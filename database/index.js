@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/fetcher');
+const Promise = require('bluebird');
 
 let repoSchema = mongoose.Schema({
   repoid: Number, //repo.id
@@ -19,10 +20,15 @@ let repoSchema = mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (repos) => {
+if (!repos.length) {
+  return;
+}
+return new Promise(function(resolve, reject) {
 
-  repos.forEach((repo) => {
+  let repoDocs = repos.map((repo) => {
     var popularity = (repo.watchers_count + repo.stargazers_count + repo.forks) / 3;
-    var currentRepo = new Repo({
+    
+    return new Repo({
       repoid: repo.id,
       repoName: repo.name,
       url: repo.html_url,
@@ -34,7 +40,14 @@ let save = (repos) => {
       userid: repo.owner.id,
       popularityAverage: popularity
     });  
-    // console.log(Repo);
+  });
+
+
+  let storedCount = 0;
+  let totalToStore = repoDocs.length;
+
+
+  repoDocs.forEach(function (currentRepo) {
     Repo.find({repoid: currentRepo.repoid}, function(error, repos) {
       console.log('CHECKING FOR DUPES........');
       if(error) {
@@ -48,14 +61,29 @@ let save = (repos) => {
             console.log(error);
             return;
           }
+          storedCount++;
           console.log('succesffuly saved ' + currentRepo.repoName);
+        }).then(() => {
+          if(storedCount === totalToStore) {
+            resolve();
+            console.log('NEEDS TO RERENDER NOW!')
+          }
         })
       } else {
+        storedCount++;
         console.log('Repo ' + currentRepo.repoName+' already exists');
+        if(storedCount === totalToStore) {
+          console.log('NEEDS TO RERENDER NOW!')
+          resolve();
+        }
       }
-    })
+    })  
   })
+}).then(()=>{
+  console.log('NEEDS TO RERENDER NOW!')
   return true;
+})
+  
 }
 
 let retreive = () => {
